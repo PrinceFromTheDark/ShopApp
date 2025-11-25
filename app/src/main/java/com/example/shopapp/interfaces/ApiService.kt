@@ -1,26 +1,33 @@
 package com.example.shopapp.interfaces
 
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
-import retrofit2.http.Query
 
-data class RegisterRequest(
-    val Nickname: String,
-    val Password: String,
-    val Email: String
+data class SignUpRequest(
+    val nickname: String,
+    val password: String,
+    val email: String
 )
 
-data class RegisterResponse(
-    val Id: Int,
-    val Nickname: String,
-    val Email: String,
-    val Roles: String,
-    val Wallet: Int
+data class SignUpResponse(
+    val token: String
+)
+
+data class SignInRequest(
+    val nickname: String,
+    val password: String,
+)
+
+data class SignInResponse(
+    val token: String
 )
 
 interface ApiService {
-    @POST("Register")
-    suspend fun register(@Body request: RegisterRequest): Response<RegisterResponse>
+    @POST("api/Auth/Register")
+    suspend fun register(@Body request: SignUpRequest): Response<SignUpResponse>
+
+    @POST("api/Auth/Login")
+    suspend fun login(@Body request: SignInRequest): Response<SignInResponse>
 }

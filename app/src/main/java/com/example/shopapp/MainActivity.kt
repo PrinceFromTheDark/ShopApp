@@ -1,139 +1,84 @@
 package com.example.shopapp
 
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
-import com.example.shopapp.interfaces.ApiService
-import com.example.shopapp.common.Common
-import com.example.shopapp.interfaces.RegisterRequest
-import com.example.shopapp.interfaces.RegisterResponse
-import com.example.shopapp.retrofit.RetrofitClient
-import kotlinx.coroutines.launch
-
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
+import com.example.shopapp.databinding.ActivityMainBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
-    lateinit var apiService: ApiService
-    lateinit var dialog: AlertDialog
+
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        val userLogin = findViewById<EditText>(R.id.userLogin)
-        val userEmail = findViewById<EditText>(R.id.userEmail)
-        val userPassword = findViewById<EditText>(R.id.userPassword)
-        val button = findViewById<Button>(R.id.buttonReg)
-
-        val retrofit = RetrofitClient.getClient("https://188.168.215.162/")
-        apiService = retrofit.create(ApiService::class.java)
-
-        dialog = AlertDialog.Builder(this)
-            .setTitle("Подождите")
-            .setMessage("Регистрация...")
-            .setCancelable(false)
-            .create()
-
-        button.setOnClickListener {
-            val login = userLogin.text.toString().trim()
-            val email = userEmail.text.toString().trim()
-            val password = userPassword.text.toString().trim()
-
-            if (login.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Заполните все поля!", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+        setSupportActionBar(binding.toolbar)
+        binding.navView.setOnItemSelectedListener({ item ->
+            if (item.itemId == R.id.catalogue) {
+                navController.navigate(R.id.navCatalogueFragment)
             }
-
-            // Инициализация (если ещё не сделана)
-            if (!::apiService.isInitialized) {
-                val retrofit = RetrofitClient.getClient("https://ваш-домен.ru/api/")
-                apiService = retrofit.create(ApiService::class.java)
+            if (item.itemId == R.id.history) {
+                navController.navigate(R.id.navCatalogueFragment)
             }
+            return@setOnItemSelectedListener true
+        } )
 
-            if (!::dialog.isInitialized) {
-                dialog = AlertDialog.Builder(this)
-                    .setMessage("Регистрация...")
-                    .setCancelable(false)
-                    .create()
-            }
-
-            lifecycleScope.launch {
-                dialog.show()
-                try {
-                    val request = RegisterRequest(login, password, email)
-                    val response = apiService.register(request)
-
-                    dialog.dismiss()
-
-                    if (response.isSuccessful) {
-                        val user = response.body()
-                        Toast.makeText(this@MainActivity, "Регистрация успешна!\nПривет, ${user?.Nickname}!", Toast.LENGTH_LONG).show()
-                        // TODO: переход на другую активность
-                    } else {
-                        val error = when (response.code()) {
-                            400 -> "Некорректные данные"
-                            409 -> "Пользователь с таким именем/почтой уже существует"
-                            else -> "Ошибка сервера (${response.code()})"
-                        }
-                        Toast.makeText(this@MainActivity, "❌ $error", Toast.LENGTH_LONG).show()
-                    }
-                } catch (e: Exception) {
-                    dialog.dismiss()
-                    Toast.makeText(this@MainActivity, "🚫 Ошибка сети: ${e.message}", Toast.LENGTH_LONG).show()
-                    e.printStackTrace()
-                }
+        navController = findNavController(R.id.fragmentContainerView)
+        appBarConfiguration = AppBarConfiguration(navController.graph)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        navController.addOnDestinationChangedListener { controller: NavController,
+                                                        destination: NavDestination,
+                                                        arguments: Bundle? ->
+            if (supportFragmentManager.backStackEntryCount < 1) {
+//                supportActionBar?.setDisplayShowHomeEnabled(false)
+//                supportActionBar?.setHomeButtonEnabled(false)
+                supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            } else {
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
             }
         }
+
+        navController.navigate(R.id.navLoginFragment)
+
+
     }
 
-    private fun registerUser(login: String, email: String, password: String) {
-        // Создайте диалог ОДИН РАЗ — например, в onCreate или отдельно
-        if (!::dialog.isInitialized) {
-            dialog = AlertDialog.Builder(this)
-                .setTitle("Регистрация")
-                .setMessage("Отправка данных...")
-                .setCancelable(false)
-                .create()
-        }
 
-        dialog.show()
 
-        lifecycleScope.launch {
-            try {
-                val response = apiService.register(RegisterRequest(login, password, email))
-
-                dialog.dismiss()
-
-                if (response.isSuccessful) {
-                    val body = response.body() ?: ""
-                    Toast.makeText(this@MainActivity, "Успех: $body", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Ошибка сервера: ${response.code()} — ${response.message()}",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            } catch (e: Exception) {
-                dialog.dismiss()
-                Toast.makeText(this@MainActivity, "Ошибка сети: ${e.message}", Toast.LENGTH_LONG).show()
-                e.printStackTrace()
-            }
-        }
+    override fun onSupportNavigateUp(): Boolean {
+        Log.d("BACKSTACK", supportFragmentManager.backStackEntryCount.toString())
+//        return false
+        val r = super.onSupportNavigateUp() && supportFragmentManager.backStackEntryCount > 3
+//        return false
+        return r
     }
+
+    fun showNavBar() {
+        binding.navView.visibility = BottomNavigationView.VISIBLE
+    }
+
+
 }
