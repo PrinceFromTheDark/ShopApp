@@ -11,15 +11,10 @@
         android:orientation="vertical"
         android:layout_margin="16dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/inter_bold"
-            android:text="Каталог"
-            android:layout_gravity="center"
-            android:layout_marginTop="170dp"
-            android:textSize="25sp" />
-
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/itemsList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </LinearLayout>
 
 </FrameLayout>
