@@ -1,18 +1,21 @@
 package com.example.shopapp
 
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shopapp.databinding.ItemLayoutBinding
+import com.example.shopapp.dto.GameDTO
 
 class ItemListAdapter(
-    private val items: List<Item>
+    private val items: List<GameDTO>
 ) : RecyclerView.Adapter<ItemListAdapter.ViewHolder>() {
 
-    // Опционально: колбэк при клике (рекомендуется передавать через лямбду вместо context)
-    var onItemClick: ((Item) -> Unit)? = null
+    var onItemClick: ((GameDTO) -> Unit)? = {
 
-    // ViewHolder теперь хранит binding
+    }
+
     inner class ViewHolder(
         private val binding: ItemLayoutBinding
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -26,11 +29,38 @@ class ItemListAdapter(
             }
         }
 
-        fun bind(item: Item) {
+        fun bind(item: GameDTO) {
             binding.title.text = item.title
             binding.price.text = String.format("%.2f", item.price)
-            // Если есть ImageView и картинка — загрузите через Glide/Coil:
-            // Glide.with(binding.imageView).load(item.imageUrl).into(binding.imageView)
+
+            // Загрузка изображения из base64
+            loadBase64Image(item.logo)
+        }
+
+        private fun loadBase64Image(base64String: String?) {
+            if (!base64String.isNullOrEmpty()) {
+                try {
+                    // Убираем префикс data:image если есть
+                    val cleanBase64 = base64String.substringAfter(",")
+
+                    // Декодируем base64 в байтовый массив
+                    val imageBytes = Base64.decode(cleanBase64, Base64.DEFAULT)
+
+                    // Создаем Bitmap из байтового массива
+                    val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+
+                    // Устанавливаем изображение в ImageView
+                    binding.image.setImageBitmap(bitmap)
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    // Устанавливаем изображение-заглушку при ошибке
+                    binding.image.setImageResource(R.drawable.ic_launcher_foreground)
+                }
+            } else {
+                // Если изображение отсутствует, устанавливаем заглушку
+                binding.image.setImageResource(R.drawable.ic_launcher_foreground)
+            }
         }
     }
 

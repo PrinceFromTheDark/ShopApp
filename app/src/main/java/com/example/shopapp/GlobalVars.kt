@@ -1,5 +1,6 @@
 package com.example.shopapp
 
 object GlobalVars {
-    var token: String? = null
+    val pageSize = 8
+    var userId = -1L
 }

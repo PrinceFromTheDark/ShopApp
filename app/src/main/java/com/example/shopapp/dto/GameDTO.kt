@@ -1,16 +1,17 @@
 package com.example.shopapp.dto
 
-import java.math.BigDecimal
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class GameDTO(
-    val id: UInt,
+    val id: Long,
     val title: String,
     val description: String,
-    val price: BigDecimal,
+    val price: Float,
     val genre: String,
-    val developerId: UInt,
+    val developerId: Long,
     val liked: Boolean,
-    val likes: UInt,
+    val likes: Long,
     val logo: String?,
 ) {
     init {

@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+
+//    kotlin("jvm") version "1.9.22" // Or your current Kotlin version
+    kotlin("plugin.serialization") version "1.9.22" // Or your current Kotlin version
 }
 
 android {
@@ -54,8 +57,7 @@ dependencies {
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.ui)
 
-    implementation("io.coil-kt:coil:2.7.0")
-    implementation("io.coil-kt:coil-base64:2.7.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

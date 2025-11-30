@@ -19,7 +19,6 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
-import com.example.shopapp.common.Common.apiService
 import com.example.shopapp.databinding.FragmentLoginBinding
 import com.example.shopapp.interfaces.ApiService
 import com.example.shopapp.interfaces.SignInRequest
@@ -30,7 +29,9 @@ class LoginFragment : Fragment() {
 
     private lateinit var binding: FragmentLoginBinding
 
-    var apiService = RetrofitClient.getClient("http://10.0.2.2:5027/").create(ApiService::class.java)
+    private lateinit var apiService: ApiService
+
+    private lateinit var sessionManager: SessionManager
 
     companion object {
         fun newInstance() = LoginFragment()
@@ -40,6 +41,11 @@ class LoginFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        apiService = RetrofitClient.getClient("http://10.0.2.2:5027/", requireContext()).create(ApiService::class.java)
+
+        val myApplication = requireActivity() as MainActivity
+        sessionManager = myApplication.sessionManager
 
         // TODO: Use the ViewModel
     }
@@ -54,8 +60,6 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        val myApplication = application as MainActivity
-//        val sessionManager = myApplication.sessionManager
 
         binding.buttonSignUp.setOnClickListener {
 //            val extra = Bundle()
@@ -87,13 +91,12 @@ class LoginFragment : Fragment() {
                     dialog.dismiss()
 
                     if (response.isSuccessful) {
-                        val user = response.body()
                         Toast.makeText(requireActivity(), "Вход в аккаунт успешен!\nПривет!", Toast.LENGTH_LONG).show()
-                        GlobalVars.token = response.body()?.token
+                        sessionManager.authToken = response.body()!!.token
 
 //                        val cl = DCL()
 //                        findNavController().addOnDestinationChangedListener(cl)
-
+                        sessionManager.userId = apiService.getUser().body()!!.id
                         findNavController().navigate(R.id.navCatalogueFragment)
 //                        findNavController().removeOnDestinationChangedListener(cl)
                         (activity as MainActivity).showNavBar()
@@ -112,6 +115,15 @@ class LoginFragment : Fragment() {
                     e.printStackTrace()
                 }
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (sessionManager.authToken != null) {
+            findNavController().navigate(R.id.navCatalogueFragment)
+            (activity as MainActivity).showNavBar()
         }
     }
 

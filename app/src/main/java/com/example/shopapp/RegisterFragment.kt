@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 class RegisterFragment : Fragment() {
 
     private lateinit var binding: FragmentRegisterBinding
-    var apiService = RetrofitClient.getClient("http://10.0.2.2:5027/").create(ApiService::class.java)
+    private lateinit var apiService: ApiService
 
     companion object {
         fun newInstance() = RegisterFragment()
@@ -31,6 +31,7 @@ class RegisterFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        apiService = RetrofitClient.getClient("http://10.0.2.2:5027/", requireContext()).create(ApiService::class.java)
         // TODO: Use the ViewModel
     }
 
@@ -44,6 +45,8 @@ class RegisterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val myApplication = requireActivity() as MainActivity
+        val sessionManager = myApplication.sessionManager
 
         val dialog = AlertDialog.Builder(requireActivity())
             .setTitle("Подождите")
@@ -73,6 +76,11 @@ class RegisterFragment : Fragment() {
                         val user = response.body()
                         Toast.makeText(requireActivity(), "Регистрация успешна!\nПривет!", Toast.LENGTH_LONG).show()
                         findNavController().navigate(R.id.navCatalogueFragment)
+
+                        sessionManager.authToken = response.body()!!.token
+
+                        sessionManager.userId = apiService.getUser().body()!!.id
+                        GlobalVars.userId = sessionManager.userId
                     } else {
                         val error = when (response.code()) {
                             400 -> "Некорректные данные"

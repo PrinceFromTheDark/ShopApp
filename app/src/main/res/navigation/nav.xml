@@ -22,4 +22,10 @@
         android:label=""
         tools:layout="@layout/fragment_catalogue" />
 
+    <fragment
+        android:id="@+id/navItemFragment"
+        android:name="com.example.shopapp.ItemFragment"
+        android:label=""
+        tools:layout="@layout/fragment_item" />
+
 </navigation>

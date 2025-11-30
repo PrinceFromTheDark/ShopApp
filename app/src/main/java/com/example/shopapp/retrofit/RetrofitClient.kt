@@ -1,5 +1,7 @@
 package com.example.shopapp.retrofit
 
+import android.content.Context
+import com.example.shopapp.AuthInterceptor
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -10,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object RetrofitClient {
     private var retrofit: Retrofit? = null
 
-    fun getClient(baseUrl: String): Retrofit {
+    fun getClient(baseUrl: String, context: Context): Retrofit {
         if (retrofit == null) {
             // Создаём логгер
             val logging = HttpLoggingInterceptor().apply {
@@ -18,13 +20,16 @@ object RetrofitClient {
             }
 
             // Создаём клиент с логгером
-            val client = OkHttpClient.Builder()
-                .addInterceptor(logging)
+
+            val authInterceptor = AuthInterceptor(context)
+
+            val okHttpClient = OkHttpClient.Builder()
+                .addInterceptor(authInterceptor)
                 .build()
 
             retrofit = Retrofit.Builder()
                 .baseUrl(baseUrl)
-                .client(client)  // ← подключаем клиент
+                .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
         }

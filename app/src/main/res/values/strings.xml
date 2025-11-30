@@ -9,4 +9,8 @@
     <string name="history">History</string>
     <string name="cart">Cart</string>
     <string name="account">Account</string>
+
+    <string name="product_image">Изображение товара</string>
+    <string name="currency_rub">₽</string>
+    <string name="add_to_cart">В корзину</string>
 </resources>

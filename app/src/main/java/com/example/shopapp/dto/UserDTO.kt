@@ -3,12 +3,12 @@ package com.example.shopapp.dto
 import java.math.BigDecimal
 
 data class UserDTO(
-    val id: UInt,
+    val id: Long,
     val nickname: String,
     val password: String,
     val email: String,
     val roles: String,
-    val wallet: BigDecimal,
+    val wallet: Float,
     val avatar: String?,
 ) {
     init {

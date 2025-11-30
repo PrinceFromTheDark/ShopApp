@@ -27,15 +27,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         sessionManager = SessionManager(applicationContext)
+        GlobalVars.userId = sessionManager.userId
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         enableEdgeToEdge()
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+//            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
+//            insets
+//        }
 
         setSupportActionBar(binding.toolbar)
         binding.navView.setOnItemSelectedListener({ item ->
@@ -63,7 +64,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        navController.navigate(R.id.navLoginFragment)
+//        navController.navigate(R.id.navLoginFragment)
 
 
     }
