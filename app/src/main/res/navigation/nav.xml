@@ -28,4 +28,22 @@
         android:label=""
         tools:layout="@layout/fragment_item" />
 
+    <fragment
+        android:id="@+id/navCartFragment"
+        android:name="com.example.shopapp.CartFragment"
+        android:label=""
+        tools:layout="@layout/fragment_cart" />
+
+    <fragment
+        android:id="@+id/navHistoryFragment"
+        android:name="com.example.shopapp.HistoryFragment"
+        android:label=""
+        tools:layout="@layout/fragment_history" />
+
+    <fragment
+        android:id="@+id/navProfileFragment"
+        android:name="com.example.shopapp.ProfileFragment"
+        android:label=""
+        tools:layout="@layout/fragment_profile" />
+
 </navigation>

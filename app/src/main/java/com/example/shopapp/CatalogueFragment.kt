@@ -70,7 +70,7 @@ class CatalogueFragment : Fragment() {
         }
 
         binding.itemsList.layoutManager = LinearLayoutManager(context)
-        binding.itemsList.adapter = ItemListAdapter(items)
+        binding.itemsList.adapter = ItemListAdapter(sessionManager, items)
         val itemListAdapter: ItemListAdapter = binding.itemsList.adapter as ItemListAdapter
 
         itemListAdapter.onItemClick = { game ->
@@ -78,10 +78,6 @@ class CatalogueFragment : Fragment() {
             arguments.putString("Game", Json.encodeToString(GameDTO.serializer(), game))
             findNavController().navigate(R.id.navItemFragment, arguments)
         }
-
-//        itemListAdapter.onItemClick = { game ->
-//            addItemToCart(sessionManager, game)
-//        }
 
         binding.itemsList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {

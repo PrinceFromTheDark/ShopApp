@@ -1,5 +1,6 @@
 package com.example.shopapp
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
@@ -10,15 +11,16 @@ import com.example.shopapp.databinding.ItemLayoutBinding
 import com.example.shopapp.dto.GameDTO
 
 class ItemListAdapter(
+    private val sessionManager: SessionManager,
     private val items: List<GameDTO>
 ) : RecyclerView.Adapter<ItemListAdapter.ViewHolder>() {
 
-    private lateinit var sessionManager: SessionManager
-    // TODO: найти способ получить контекст в ItemListAdapter-е
-//    val myApplication = requireActivity() as MainActivity
-//    sessionManager = myApplication.sessionManager
     var onItemClick: ((GameDTO) -> Unit)? = {
 
+    }
+
+    var onAddToCart: ((GameDTO) -> Unit)? = { game ->
+        addItemToCart(sessionManager, game)
     }
 
     inner class ViewHolder(
@@ -36,7 +38,7 @@ class ItemListAdapter(
             binding.addToCartButton.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    onItemClick?.invoke(items[position])
+                    onAddToCart?.invoke(items[position])
                 }
             }
         }

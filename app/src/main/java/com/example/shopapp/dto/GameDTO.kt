@@ -13,6 +13,7 @@ data class GameDTO(
     val liked: Boolean,
     val likes: Long,
     val logo: String?,
+    val amountInCart: Int,
 ) {
     init {
         require(title.isNotBlank() && title.length <= 256) { "Title cannot be blank or larger than 256 symbols" }

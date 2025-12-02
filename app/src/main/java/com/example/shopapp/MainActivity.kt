@@ -46,6 +46,12 @@ class MainActivity : AppCompatActivity() {
             if (item.itemId == R.id.history) {
                 navController.navigate(R.id.navCatalogueFragment)
             }
+            if (item.itemId == R.id.cart) {
+                navController.navigate(R.id.navCartFragment)
+            }
+            if (item.itemId == R.id.cart) {
+                navController.navigate(R.id.navProfileFragment)
+            }
             return@setOnItemSelectedListener true
         } )
 
