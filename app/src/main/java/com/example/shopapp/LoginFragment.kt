@@ -122,8 +122,12 @@ class LoginFragment : Fragment() {
         super.onResume()
 
         if (sessionManager.authToken != null) {
-            findNavController().navigate(R.id.navCatalogueFragment)
-            (activity as MainActivity).showNavBar()
+            lifecycleScope.launch {
+                if (apiService.validateToken().isSuccessful) {
+                    findNavController().navigate(R.id.navCatalogueFragment)
+                    (activity as MainActivity).showNavBar()
+                }
+            }
         }
     }
 

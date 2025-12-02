@@ -1,5 +1,6 @@
 package com.example.shopapp
 
+import android.content.ClipData.Item
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
@@ -33,6 +34,8 @@ class CatalogueFragment : Fragment() {
 
     private lateinit var apiService: ApiService
 
+    private lateinit var sessionManager: SessionManager
+
     companion object {
         fun newInstance() = CatalogueFragment()
     }
@@ -43,6 +46,9 @@ class CatalogueFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         apiService = RetrofitClient.getClient("http://10.0.2.2:5027/", requireContext()).create(ApiService::class.java)
+
+        val myApplication = requireActivity() as MainActivity
+        sessionManager = myApplication.sessionManager
         // TODO: Use the ViewModel
     }
 
@@ -65,12 +71,17 @@ class CatalogueFragment : Fragment() {
 
         binding.itemsList.layoutManager = LinearLayoutManager(context)
         binding.itemsList.adapter = ItemListAdapter(items)
+        val itemListAdapter: ItemListAdapter = binding.itemsList.adapter as ItemListAdapter
 
-        (binding.itemsList.adapter as ItemListAdapter).onItemClick = { game ->
+        itemListAdapter.onItemClick = { game ->
             val arguments = Bundle()
             arguments.putString("Game", Json.encodeToString(GameDTO.serializer(), game))
             findNavController().navigate(R.id.navItemFragment, arguments)
         }
+
+//        itemListAdapter.onItemClick = { game ->
+//            addItemToCart(sessionManager, game)
+//        }
 
         binding.itemsList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {

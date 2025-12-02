@@ -86,7 +86,8 @@
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 app:icon="@drawable/cart"
                 app:iconGravity="textStart"
-                app:iconPadding="8dp" />
+                app:iconPadding="8dp"
+                android:id="@+id/addToCartButton" />
 
         </LinearLayout>
 

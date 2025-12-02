@@ -4,6 +4,7 @@ import com.example.shopapp.GlobalVars
 import com.example.shopapp.dto.GameDTO
 import com.example.shopapp.dto.UserDTO
 import com.google.gson.annotations.SerializedName
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -36,6 +37,9 @@ interface ApiService {
 
     @POST("api/Auth/Login")
     suspend fun login(@Body request: SignInRequest): Response<SignInResponse>
+
+    @GET("api/Auth/ValidateToken")
+    suspend fun validateToken(): Response<ResponseBody>
 
     @GET("api/Users/GetUser")
     suspend fun getUser(): Response<UserDTO>

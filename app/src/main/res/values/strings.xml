@@ -13,4 +13,5 @@
     <string name="product_image">Изображение товара</string>
     <string name="currency_rub">₽</string>
     <string name="add_to_cart">В корзину</string>
+    <string name="showMore">Показать больше</string>
 </resources>
