@@ -13,6 +13,7 @@ class SessionManager(context: Context) {
     private val KEY_USER_ID = "userId"
     private val ITEM_CART_LIST = "itemCartList"
     private val IS_LOGGED_IN = "isLoggedIn"
+    private val CART_ITEMS_LIST = "CART_ITEMS_LIST"
 
     private val sharedPrefs: SharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
     private val editor: SharedPreferences.Editor = sharedPrefs.edit()
@@ -41,16 +42,32 @@ class SessionManager(context: Context) {
             }
         }
 
-    public var itemsInCart: ArrayList<GameDTO>
+//    public var itemsInCart: ArrayList<GameDTO>
+//        get() {
+//            val json = sharedPrefs.getString(ITEM_CART_LIST, null)
+//            if (json == null) return ArrayList<GameDTO>()
+//            val type = object : TypeToken<ArrayList<GameDTO>>() {}.type
+//            return gson.fromJson(json, type)
+//        }
+//        set(newValue) {
+//            val json = gson.toJson(newValue)
+//            editor.putString(ITEM_CART_LIST, json)
+//            editor.apply()
+//        }
+
+    public var cartItems: MutableList<CartItem>
         get() {
-            val json = sharedPrefs.getString(ITEM_CART_LIST, null)
-            if (json == null) return ArrayList<GameDTO>()
-            val type = object : TypeToken<ArrayList<GameDTO>>() {}.type
-            return gson.fromJson(json, type)
+            val json = sharedPrefs.getString(CART_ITEMS_LIST, null)
+            return if (json.isNullOrEmpty()) {
+                mutableListOf()
+            } else {
+                val type = object : TypeToken<MutableList<CartItem>>() {}.type
+                gson.fromJson(json, type) ?: mutableListOf()
+            }
         }
         set(newValue) {
             val json = gson.toJson(newValue)
-            editor.putString(ITEM_CART_LIST, json)
+            editor.putString(CART_ITEMS_LIST, json)
             editor.apply()
         }
 

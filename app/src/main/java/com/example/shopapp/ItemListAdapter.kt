@@ -1,10 +1,13 @@
 package com.example.shopapp
 
+import android.content.ClipData.Item
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shopapp.databinding.ItemLayoutBinding
@@ -19,8 +22,14 @@ class ItemListAdapter(
 
     }
 
-    var onAddToCart: ((GameDTO) -> Unit)? = { game ->
-        addItemToCart(sessionManager, game)
+    var addToCart: ((GameDTO, ItemLayoutBinding) -> Unit)? = { game, binding ->
+        addToCart(sessionManager, game)
+        binding.addToCartButton.visibility = View.VISIBLE
+    }
+
+    var removeFromToCart: ((GameDTO, ItemLayoutBinding) -> Unit)? = { game, binding ->
+        val quantityLeft = removeFromCart(sessionManager, game)
+        if (quantityLeft!! < 1) binding.removeFromCartButton.visibility = View.GONE
     }
 
     inner class ViewHolder(
@@ -38,7 +47,14 @@ class ItemListAdapter(
             binding.addToCartButton.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    onAddToCart?.invoke(items[position])
+                    addToCart?.invoke(items[position], binding)
+                }
+            }
+
+            binding.removeFromCartButton.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    removeFromToCart?.invoke(items[position], binding)
                 }
             }
         }

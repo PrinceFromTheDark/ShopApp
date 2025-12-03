@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
             if (item.itemId == R.id.cart) {
                 navController.navigate(R.id.navCartFragment)
             }
-            if (item.itemId == R.id.cart) {
+            if (item.itemId == R.id.profile) {
                 navController.navigate(R.id.navProfileFragment)
             }
             return@setOnItemSelectedListener true

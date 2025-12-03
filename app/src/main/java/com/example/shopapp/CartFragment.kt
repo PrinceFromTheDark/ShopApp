@@ -28,9 +28,7 @@ class CartFragment : Fragment() {
 
     private lateinit var binding: FragmentCatalogueBinding
 
-    private var items = ArrayList<GameDTO>()
-    private var page = 1
-    private var itemsLoading = false
+    private var items = ArrayList<CartItem>()
 
     private lateinit var apiService: ApiService
 
@@ -64,8 +62,10 @@ class CartFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // TODO: заменить получение данных с сервера на данные из shared prefs
-        items.addAll(sessionManager.itemsInCart)
+        items.addAll(sessionManager.cartItems)
 
+        binding.itemsList.layoutManager = LinearLayoutManager(context)
+        binding.itemsList.adapter = ItemListAdapter(sessionManager, items)
 
 //        binding.itemsList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 //            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
